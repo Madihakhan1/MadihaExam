@@ -1,18 +1,17 @@
 # TheaterBookingExamSpring2025 Project Overview
 
 ## Introduction
-TheaterBookingExamSpring2025 is a RESTful API application for managing theater performances and actors.  
-It includes CRUD operations for performances, assignment of lead actors, database population, and secure authentication and authorization using JWT.
+TheaterBookingExamSpring2025 is a RESTful API backend for managing theater performances and actors. It supports full CRUD operations for performances, assigning lead actors, populating test data, secure authentication and authorization using JWT, and integration with external APIs.
 
 ## Project Structure
 
 ### Main Packages
 - `config`: Hibernate and application configuration
 - `controllers`: Controllers handling HTTP logic
-- `daos`: Data Access Objects (JPA and Hibernate)
+- `daos`: Data Access Objects using JPA and Hibernate
 - `dtos`: Data Transfer Objects
-- `entities`: JPA entity classes (Actor, Performance)
-- `enums`: Genre enum (DRAMA, COMEDY, MUSICAL)
+- `entities`: JPA entity classes (`Actor`, `Performance`)
+- `enums`: Genre enum (`DRAMA`, `COMEDY`, `MUSICAL`)
 - `exceptions`: Custom exceptions and error handling
 - `routes`: API route definitions
 - `security`: JWT security implementation
@@ -43,11 +42,12 @@ It includes CRUD operations for performances, assignment of lead actors, databas
 - `PUT /performances/{performanceId}/actors/{actorId}` – Assign an actor to a performance
 - `POST /performances/populate` – Populate database with sample performances and actors
 
-I use `PUT` to assign an actor to a performance because it's idempotent and suitable for updating an existing resource. `PATCH` could also be used, but `PUT` is more appropriate for complete assignment.
+**Using `PUT` to assign an actor is chosen due to idempotency and suitability for updating existing resources. `PATCH` could alternatively be used for partial updates, but `PUT` is clearer here.**
 
-### Populator
-- `GET /populator/users` – Populate default users
-- `GET /populator/theater` – Populate performances and actors
+### Additional (Not Implemented Yet)
+- Filtering performances by genre
+- Actor overview by revenue/time
+- Integration with external API to fetch props data by genre
 
 ### Security
 - `POST /auth/register` – Register user
@@ -57,29 +57,27 @@ I use `PUT` to assign an actor to a performance because it's idempotent and suit
 - `GET /protected/admin_demo` – Protected route for ADMIN
 
 ## Testing
+Endpoints tested thoroughly using Rest-Assured and IntelliJ HTTP client:
+- CRUD operations for performances
+- Actor assignments
+- Populator endpoints
+- JWT-based login and protected endpoints
 
-All required endpoints have been tested using IntelliJ `.http` files:
-- GET, POST, PUT, DELETE for `/performances`
-- PUT to assign actor to performance
-- Actor data verified via `GET /performances/{id}`
-- Populator endpoints tested
-- Register/login with JWT verified
-- Responses saved under `/resources/http/dev.http`
+Test classes available in `/test` directory.
 
 ## Error Handling
+Custom `ApiException` returned as JSON for robust error handling. Examples:
+- Performance ID not found
+- Deletion attempt on non-existent performance
 
-- A custom `ApiException` is returned as JSON for failed operations
-- Examples include:
-    - Fetching a performance by non-existent ID
-    - Deleting a performance that does not exist
-
-### Checked vs. Unchecked
-In Java, **checked exceptions** must be declared or caught, while **unchecked exceptions** (RuntimeExceptions) do not.  
-I used unchecked exceptions (`ApiException`) for centralized REST error handling, improving control over API responses.
+### Checked vs. Unchecked Exceptions
+- **Checked exceptions** require explicit handling or declaration
+- **Unchecked exceptions** (RuntimeException) allow more flexible error management
+- Project utilizes unchecked exceptions (`ApiException`) for consistent API response handling.
 
 ## Technologies Used
 - Java 17
-- Javalin (REST API)
+- Javalin
 - Hibernate / JPA
 - PostgreSQL
 - Maven
@@ -90,23 +88,17 @@ I used unchecked exceptions (`ApiException`) for centralized REST error handling
 
 ## Getting Started
 
-1. Clone the repo.
-2. Create a `config.properties` file inside `/resources`:
+1. Clone repository
+2. Create `config.properties` in `/resources`:
 
-DB_NAME=theater_booking_exam DB_USERNAME=postgres 
-DB_PASSWORD=yourpassword 
-SECRET_KEY=minimum32characterslong 
-ISSUER=exam2025 TOKEN_EXPIRE_TIME=3600000
+```properties
+DB_NAME=theater_booking_exam
+DB_USERNAME=postgres
+DB_PASSWORD=yourpassword
+SECRET_KEY=minimum32characterslong
+ISSUER=exam2025
+TOKEN_EXPIRE_TIME=3600000
 
+3. Build and run application
 
-3. Build the app:
-
-4. Run it:
-
-
-API will be available at: `http://localhost:7007`
-
-## Deployment
-The application can be containerized using the provided `Dockerfile`.
-
-
+API available at: http://localhost:7007
