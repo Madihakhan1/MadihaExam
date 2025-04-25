@@ -2,9 +2,11 @@ package dat.routes;
 
 import dat.controllers.impl.PerformanceController;
 import dat.dtos.PerformanceDTO;
+import dat.entities.Genre;
 import dat.security.enums.Role;
 import io.javalin.apibuilder.EndpointGroup;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -19,12 +21,8 @@ public class PerformanceRoutes {
 
     public EndpointGroup getRoutes() {
         return () -> {
-
-            // Get all performances (anyone can access)
-            get("", ctx -> ctx.json(controller.getAll()), Role.ANYONE);
-
-            // Get performance by ID (anyone can access)
-            get("/{id}", ctx -> {
+            get("/performances", ctx -> ctx.json(controller.getAll()));  // Vær sikker på at ruten er defineret korrekt
+            get("/performances/{id}", ctx -> {
                 int id = Integer.parseInt(ctx.pathParam("id"));
                 PerformanceDTO dto = controller.getById(id);
                 if (dto != null) {
@@ -32,17 +30,16 @@ public class PerformanceRoutes {
                 } else {
                     ctx.status(404).json(Map.of("error", "Performance not found"));
                 }
-            }, Role.ANYONE);
+            });
 
-            // Create performance (admin only)
-            post("", ctx -> {
+            // Definer ruterne for at oprette, opdatere, slette
+            post("/performances", ctx -> {
                 PerformanceDTO dto = ctx.bodyAsClass(PerformanceDTO.class);
                 PerformanceDTO created = controller.create(dto);
                 ctx.status(201).json(created);
-            }, Role.ADMIN);
+            });
 
-            // Update performance (admin only)
-            put("/{id}", ctx -> {
+            put("/performances/{id}", ctx -> {
                 int id = Integer.parseInt(ctx.pathParam("id"));
                 PerformanceDTO dto = ctx.bodyAsClass(PerformanceDTO.class);
                 PerformanceDTO updated = controller.update(id, dto);
@@ -51,10 +48,9 @@ public class PerformanceRoutes {
                 } else {
                     ctx.status(404).json(Map.of("error", "Performance not found"));
                 }
-            }, Role.ADMIN);
+            });
 
-            // Delete performance (admin only)
-            delete("/{id}", ctx -> {
+            delete("/performances/{id}", ctx -> {
                 int id = Integer.parseInt(ctx.pathParam("id"));
                 boolean deleted = controller.delete(id);
                 if (deleted) {
@@ -62,21 +58,8 @@ public class PerformanceRoutes {
                 } else {
                     ctx.status(404).json(Map.of("error", "Performance not found"));
                 }
-            }, Role.ADMIN);
+            });
 
-            // Add actor to performance (anyone can access)
-            put("/{performanceId}/actors/{actorId}", ctx -> {
-                int performanceId = Integer.parseInt(ctx.pathParam("performanceId"));
-                int actorId = Integer.parseInt(ctx.pathParam("actorId"));
-                controller.addActorToPerformance(performanceId, actorId);
-                ctx.status(204);
-            }, Role.ANYONE);
-
-            // Populate test data (admin only)
-            post("/populate", ctx -> {
-                controller.populateTestData();
-                ctx.status(201).result("Database populated");
-            }, Role.ADMIN);
         };
     }
 }

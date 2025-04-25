@@ -4,12 +4,15 @@ import dat.daos.IDAO;
 import dat.daos.IPerformanceActorDAO;
 import dat.dtos.PerformanceDTO;
 import dat.entities.Actor;
+import dat.entities.Genre;
 import dat.entities.Performance;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -126,6 +129,40 @@ public class PerformanceDAO implements IDAO<PerformanceDTO, Integer>, IPerforman
             em.close();
         }
     }
+
+    public List<PerformanceDTO> getPerformancesByGenre(Genre genre) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Performance> performances = em.createQuery("SELECT p FROM Performance p WHERE p.genre = :genre", Performance.class)
+                    .setParameter("genre", genre)
+                    .getResultList();
+            return performances.stream().map(PerformanceDTO::new).collect(Collectors.toList());
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Map<String, Object>> getActorOverviewByRevenue() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Object[]> results = em.createQuery(
+                            "SELECT a.id, SUM(p.ticketPrice) FROM Performance p JOIN p.actor a GROUP BY a.id", Object[].class)
+                    .getResultList();
+
+            return results.stream()
+                    .map(result -> {
+                        Map<String, Object> actorRevenue = new HashMap<>();
+                        actorRevenue.put("actorId", result[0]);
+                        actorRevenue.put("totalRevenue", result[1]);
+                        return actorRevenue;
+                    })
+                    .collect(Collectors.toList());
+        } finally {
+            em.close();
+        }
+    }
+
+
 
 
 }

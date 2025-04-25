@@ -1,4 +1,4 @@
-@url = http://localhost:7007
+@url = http://localhost:7007/api
 
 ### Get all performances
 GET {{url}}/performances

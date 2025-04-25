@@ -2,8 +2,10 @@ package dat.controllers.impl;
 
 import dat.daos.impl.PerformanceDAO;
 import dat.dtos.PerformanceDTO;
+import dat.entities.Genre;
 
 import java.util.List;
+import java.util.Map;
 
 public class PerformanceController {
     private final PerformanceDAO dao;
@@ -39,4 +41,13 @@ public class PerformanceController {
     public void populateTestData() {
         dat.utils.Populator.populateTheaterData(dat.config.HibernateConfig.getEntityManagerFactory());
     }
+
+    public List<PerformanceDTO> getPerformancesByGenre(Genre genre) {
+        return dao.getPerformancesByGenre(genre);
+    }
+    public List<Map<String, Object>> getActorOverviewByRevenue() {
+        return dao.getActorOverviewByRevenue();
+    }
+
+
 }

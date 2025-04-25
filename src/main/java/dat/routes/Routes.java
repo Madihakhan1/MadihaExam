@@ -1,12 +1,12 @@
 package dat.routes;
 
 import dat.controllers.impl.PerformanceController;
+import dat.daos.impl.PerformanceDAO;
+import dat.config.HibernateConfig;
+import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
-
-import dat.daos.impl.PerformanceDAO;
-import dat.config.HibernateConfig;
 import jakarta.persistence.EntityManagerFactory;
 
 public class Routes {
@@ -22,5 +22,5 @@ public class Routes {
             path("/performances", performanceRoutes.getRoutes());
         };
     }
-}
 
+}
