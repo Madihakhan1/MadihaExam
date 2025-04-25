@@ -1,30 +1,32 @@
 package dat.routes;
 
-import dat.config.HibernateConfig;
-import dat.security.enums.Role;
 import dat.utils.Populator;
 import io.javalin.apibuilder.EndpointGroup;
 import jakarta.persistence.EntityManagerFactory;
 
-import static io.javalin.apibuilder.ApiBuilder.*;
+import static io.javalin.apibuilder.ApiBuilder.get;
+
 
 public class PopulatorRoutes {
 
+    private final EntityManagerFactory emf;
 
-    protected EndpointGroup getRoutes() {
+    public PopulatorRoutes(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
 
-
-        //OBS denne ville ikke fungere med test, da den er bundet til den "rigtige" databse.
-        // Alternativ skal man lave en ny constructor og skyde emf ind udefra
-
-        EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
-
+    public EndpointGroup getRoutes() {
         return () -> {
-            get("/", ctx -> {
+            get("/users", ctx -> {
                 Populator.populateUsers(emf);
-                ctx.result("Populates");
+                ctx.result(" Users populated");
+            });
+
+            get("/theater", ctx -> {
+                Populator.populateTheaterData(emf);
+                ctx.result(" Theater data populated");
             });
         };
-
     }
 }
+

@@ -1,5 +1,8 @@
 package dat.config;
 
+import dat.entities.Actor;
+import dat.entities.Genre;
+import dat.entities.Performance;
 import dat.security.entities.Role;
 import dat.security.entities.User;
 import dat.utils.Utils;
@@ -41,6 +44,9 @@ public class HibernateConfig {
 
     // TODO: IMPORTANT: Add Entity classes here for them to be registered with Hibernate
     private static void getAnnotationConfiguration(Configuration configuration) {
+        configuration.addAnnotatedClass(Actor.class);
+        configuration.addAnnotatedClass(Performance.class);
+        configuration.addAnnotatedClass(Genre.class);
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Role.class);
     }
@@ -77,7 +83,7 @@ public class HibernateConfig {
     private static Properties setBaseProperties(Properties props) {
         props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-        props.put("hibernate.hbm2ddl.auto", "create");   // TODO: create or update
+        props.put("hibernate.hbm2ddl.auto", "update");   // TODO: create or update
         props.put("hibernate.current_session_context_class", "thread");
         props.put("hibernate.show_sql", "false");
         props.put("hibernate.format_sql", "false");

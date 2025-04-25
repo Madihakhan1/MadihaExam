@@ -5,77 +5,125 @@ import dat.security.entities.Role;
 import dk.bugelhartmann.UserDTO;
 import jakarta.persistence.EntityManagerFactory;
 
+import dat.entities.Actor;
+import dat.entities.Genre;
+import dat.entities.Performance;
+
+
+import java.time.LocalDateTime;
+
 public class Populator {
+    public static void clearDatabase(EntityManagerFactory emf) {
+        try (var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+            // Ryd først relationstabeller for at undgå foreign key problemer
+            em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
+
+            // Ryd hovedtabeller
+            em.createQuery("DELETE FROM Performance").executeUpdate();
+            em.createQuery("DELETE FROM Actor").executeUpdate();
+            em.createQuery("DELETE FROM User").executeUpdate();
+            em.createQuery("DELETE FROM Role").executeUpdate();
+
+            em.getTransaction().commit();
+            System.out.println("Database cleared!");
+        } catch (Exception e) {
+            System.err.println("Failed to clear database: " + e.getMessage());
+        }
+    }
+
 
     public static UserDTO[] populateUsers(EntityManagerFactory emf) {
         User user, admin;
         Role userRole, adminRole;
 
-        user = new User("usertest", "user123");
-        admin = new User("admintest", "admin123");
-        userRole = new Role("USER");
-        adminRole = new Role("ADMIN");
-        user.addRole(userRole);
-        admin.addRole(adminRole);
-
-        try (var em = emf.createEntityManager())
-        {
-            em.getTransaction().begin();
-            em.persist(userRole);
-            em.persist(adminRole);
-            em.persist(user);
-            em.persist(admin);
-            em.getTransaction().commit();
-        }
-            UserDTO userDTO = new UserDTO(user.getUsername(), "user123");
-            UserDTO adminDTO = new UserDTO(admin.getUsername(), "admin123");
-            return new UserDTO[]{userDTO, adminDTO};
-        }
-
-    /*public static Hotel[] populateHotels(EntityManagerFactory emf) {
-
-        Set<Room> calRooms = getCalRooms();
-        Set<Room> hilRooms = getHilRooms();
-
         try (var em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            Hotel california = new Hotel("Hotel California", "California", Hotel.HotelType.LUXURY);
-            Hotel hilton = new Hotel("Hilton", "Copenhagen", Hotel.HotelType.STANDARD);
-            california.setRooms(calRooms);
-            hilton.setRooms(hilRooms);
-            em.persist(california);
-            em.persist(hilton);
+
+            // Tjek om roller allerede findes
+            userRole = em.find(Role.class, "USER");
+            if (userRole == null) {
+                userRole = new Role("USER");
+                em.persist(userRole);
+            }
+
+            adminRole = em.find(Role.class, "ADMIN");
+            if (adminRole == null) {
+                adminRole = new Role("ADMIN");
+                em.persist(adminRole);
+            }
+
+            user = new User("usertest", "user123");
+            admin = new User("admintest", "admin123");
+
+            user.addRole(userRole);
+            admin.addRole(adminRole);
+
+            em.persist(user);
+            em.persist(admin);
+
             em.getTransaction().commit();
-            return new Hotel[]{california, hilton};
+        }
+
+        UserDTO userDTO = new UserDTO("usertest", "user123");
+        UserDTO adminDTO = new UserDTO("admintest", "admin123");
+        return new UserDTO[]{userDTO, adminDTO};
+    }
+
+
+    public static void populateTheaterData(EntityManagerFactory emf) {
+        try (var em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+
+            Actor actor1 = Actor.builder()
+                    .firstName("Emma")
+                    .lastName("Thompson")
+                    .email("emma@example.com")
+                    .phone("12345678")
+                    .yearsOfExperience(12)
+                    .build();
+
+            Actor actor2 = Actor.builder()
+                    .firstName("John")
+                    .lastName("Smith")
+                    .email("john@example.com")
+                    .phone("87654321")
+                    .yearsOfExperience(8)
+                    .build();
+
+            Performance p1 = Performance.builder()
+                    .title("Hamlet")
+                    .startTime(LocalDateTime.now().plusDays(1))
+                    .endTime(LocalDateTime.now().plusDays(1).plusHours(2))
+                    .ticketPrice(150)
+                    .latitude(55.6761)
+                    .longitude(12.5683)
+                    .genre(Genre.DRAMA)
+                    .actor(actor1)
+                    .build();
+
+            Performance p2 = Performance.builder()
+                    .title("Comedy Night")
+                    .startTime(LocalDateTime.now().plusDays(3))
+                    .endTime(LocalDateTime.now().plusDays(3).plusHours(1))
+                    .ticketPrice(100)
+                    .latitude(55.6761)
+                    .longitude(12.5683)
+                    .genre(Genre.COMEDY)
+                    .actor(actor2)
+                    .build();
+
+            em.persist(actor1);
+            em.persist(actor2);
+            em.persist(p1);
+            em.persist(p2);
+
+            em.getTransaction().commit();
+            System.out.println("Theater data populated!");
+        } catch (Exception e) {
+            System.out.println("Failed to populate theater data: " + e.getMessage());
         }
     }
-
-    @NotNull
-    private static Set<Room> getCalRooms() {
-        Room r100 = new Room(100, new BigDecimal(2520), Room.RoomType.SINGLE);
-        Room r101 = new Room(101, new BigDecimal(2520), Room.RoomType.SINGLE);
-        Room r102 = new Room(102, new BigDecimal(2520), Room.RoomType.SINGLE);
-        Room r103 = new Room(103, new BigDecimal(2520), Room.RoomType.SINGLE);
-        Room r104 = new Room(104, new BigDecimal(3200), Room.RoomType.DOUBLE);
-        Room r105 = new Room(105, new BigDecimal(4500), Room.RoomType.SUITE);
-
-        Room[] roomArray = {r100, r101, r102, r103, r104, r105};
-        return Set.of(roomArray);
-    }
-
-    @NotNull
-    private static Set<Room> getHilRooms() {
-        Room r111 = new Room(111, new BigDecimal(2520), Room.RoomType.SINGLE);
-        Room r112 = new Room(112, new BigDecimal(2520), Room.RoomType.SINGLE);
-        Room r113 = new Room(113, new BigDecimal(2520), Room.RoomType.SINGLE);
-        Room r114 = new Room(114, new BigDecimal(2520), Room.RoomType.DOUBLE);
-        Room r115 = new Room(115, new BigDecimal(3200), Room.RoomType.DOUBLE);
-        Room r116 = new Room(116, new BigDecimal(4500), Room.RoomType.SUITE);
-
-        Room[] roomArray = {r111, r112, r113, r114, r115, r116};
-        return Set.of(roomArray);
-    }
-
-
-     */
 }

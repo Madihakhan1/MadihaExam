@@ -19,7 +19,7 @@ import java.util.Properties;
  */
 public class Utils {
     public static void main(String[] args) {
-        System.out.println(getPropertyValue("db.name", "properties-from-pom.properties"));
+        System.out.println(getPropertyValue("DB_NAME", "config.properties"));
     }
     public static String getPropertyValue(String propName, String resourceName)  {
         // REMEMBER TO BUILD WITH MAVEN FIRST. Read the property file if not deployed (else read system vars instead)

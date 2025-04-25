@@ -1,100 +1,96 @@
-### A simple get request to the test endpoint. No need for login
-GET {{url}}/auth/test/
+@url = http://localhost:7007
 
-### Populate the database with some data
-GET {{url}}/hotels/populate/
+### Get all performances
+GET {{url}}/performances
+Accept: application/json
 
-### Create a new user - this one will only get a USER role by default
-POST {{url}}/auth/register/
+### Populate users
+GET {{url}}/populator/users
+
+### Populate performances and actors
+GET {{url}}/populator/theater
+
+### Register new user
+POST {{url}}/auth/register
+Content-Type: application/json
 
 {
-    "username": "user",
-    "password": "test123"
+  "username": "user",
+  "password": "test123"
 }
 
-###
-POST {{url}}/auth/login/
+### Login
+POST {{url}}/auth/login
+Content-Type: application/json
 
 {
-    "username": "user",
-    "password": "test123"
+  "username": "user",
+  "password": "test123"
 }
 
 > {%
     client.global.set("jwt_token", response.body.token);
-    console.log("JWT Token:", client.global.get("jwt_token"));
 %}
 
-###
-GET {{url}}/protected/user_demo/
-Accept: application/json
+### Access protected user route
+GET {{url}}/protected/user_demo
 Authorization: Bearer {{jwt_token}}
 
-###
-GET {{url}}/protected/admin_demo/
-Accept: application/json
+### Access protected admin route
+GET {{url}}/protected/admin_demo
 Authorization: Bearer {{jwt_token}}
 
-### Add admin role to user
-POST {{url}}/auth/user/addrole/
-Accept: application/json
-Authorization: Bearer {{jwt_token}}
-
-{
-    "role": "admin"
-}
-Accept: application/json
-Authorization: Bearer {{jwt_token}}
-
-###
-GET {{url}}/hotels
-Accept: application/json
-Authorization: Bearer {{jwt_token}}
-
-###
-GET {{url}}/hotels/2
-
-###
-POST {{url}}/hotels
+### Add admin role to current user
+POST {{url}}/auth/user/addrole
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "hotelName": "Holiday Inn",
-  "hotelAddress": "Stuttgart",
-  "hotelType": "STANDARD"
+  "role": "admin"
 }
 
-###
-PUT {{url}}/hotels/3
-Content-Type: application/json
-
-{
-  "hotelName": "Ritz Carlton",
-  "hotelAddress": "London City",
-  "hotelType": "LUXURY"
-}
-
-###
-DELETE {{url}}/hotels/5
-Authorization: Bearer {{jwt_token}}
-
-// Room API
-###
-GET {{url}}/rooms
-Authorization: Bearer {{jwt_token}}
-
-###
-GET {{url}}/rooms/1
-Authorization: Bearer {{jwt_token}}
-
-###
-POST {{url}}/rooms/hotel/1
+### Create new performance
+POST {{url}}/performances
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "roomNumber": 11,
-  "roomPrice": 1150,
-  "roomType": "SINGLE"
+  "title": "Romeo and Juliet",
+  "startTime": "2025-05-03T19:00:00",
+  "endTime": "2025-05-03T21:00:00",
+  "ticketPrice": 180,
+  "latitude": 55.6761,
+  "longitude": 12.5683,
+  "genre": "DRAMA"
 }
+
+### Get all performances (again)
+GET {{url}}/performances
+Authorization: Bearer {{jwt_token}}
+
+### Get performance by ID
+GET {{url}}/performances/1
+Authorization: Bearer {{jwt_token}}
+
+### Update performance
+PUT {{url}}/performances/1
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "title": "Romeo and Juliet (Updated)",
+  "startTime": "2025-05-03T19:30:00",
+  "endTime": "2025-05-03T21:30:00",
+  "ticketPrice": 200,
+  "latitude": 55.6761,
+  "longitude": 12.5683,
+  "genre": "DRAMA"
+}
+
+### Add actor to performance
+PUT {{url}}/performances/1/actors/1
+Authorization: Bearer {{jwt_token}}
+
+### Delete performance
+DELETE {{url}}/performances/1
+Authorization: Bearer {{jwt_token}}
