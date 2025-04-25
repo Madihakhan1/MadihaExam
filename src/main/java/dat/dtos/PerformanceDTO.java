@@ -1,5 +1,6 @@
 package dat.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dat.entities.Genre;
 import dat.entities.Performance;
 import lombok.*;
@@ -21,6 +22,7 @@ public class PerformanceDTO {
     private Genre genre;
     private ActorDTO actor;
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public PerformanceDTO(Performance performance) {
         this.id = performance.getId();
         this.title = performance.getTitle();
