@@ -1,3 +1,5 @@
+@url = http://localhost:7007/api
+
 ### A simple get request to the test endpoint. No need for login
 GET {{url}}/auth/test/
 
