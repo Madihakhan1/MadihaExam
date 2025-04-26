@@ -21,7 +21,7 @@ public class PerformanceRoutes {
 
     public EndpointGroup getRoutes() {
         return () -> {
-            get("/performances", ctx -> ctx.json(controller.getAll()));  // Vær sikker på at ruten er defineret korrekt
+            get("/performances", ctx -> ctx.json(controller.getAll()));
             get("/performances/{id}", ctx -> {
                 int id = Integer.parseInt(ctx.pathParam("id"));
                 PerformanceDTO dto = controller.getById(id);
@@ -32,7 +32,6 @@ public class PerformanceRoutes {
                 }
             });
 
-            // Definer ruterne for at oprette, opdatere, slette
             post("/performances", ctx -> {
                 PerformanceDTO dto = ctx.bodyAsClass(PerformanceDTO.class);
                 PerformanceDTO created = controller.create(dto);

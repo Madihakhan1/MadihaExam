@@ -1,7 +1,7 @@
 @url = http://localhost:7007/api
 
 ### Get all performances
-GET {{url}}/performances
+GET {{url}}/performances/performances
 Accept: application/json
 
 ### Populate users
@@ -50,7 +50,7 @@ Authorization: Bearer {{jwt_token}}
 }
 
 ### Create new performance
-POST {{url}}/performances
+POST {{url}}/performances/performances
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
@@ -65,15 +65,15 @@ Authorization: Bearer {{jwt_token}}
 }
 
 ### Get all performances (again)
-GET {{url}}/performances
+GET {{url}}/performances/performances
 Authorization: Bearer {{jwt_token}}
 
 ### Get performance by ID
-GET {{url}}/performances/1
+GET {{url}}/performances/performances/1
 Authorization: Bearer {{jwt_token}}
 
 ### Update performance
-PUT {{url}}/performances/1
+PUT {{url}}/performances/performances/2
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
@@ -88,9 +88,9 @@ Authorization: Bearer {{jwt_token}}
 }
 
 ### Add actor to performance
-PUT {{url}}/performances/1/actors/1
+PUT {{url}}/performances/performances/1/actors/1
 Authorization: Bearer {{jwt_token}}
 
 ### Delete performance
-DELETE {{url}}/performances/1
+DELETE {{url}}/performances/performances/1
 Authorization: Bearer {{jwt_token}}
