@@ -42,7 +42,7 @@ TheaterBookingExamSpring2025 is a RESTful API backend for managing theater perfo
 - `PUT /performances/{performanceId}/actors/{actorId}` – Assign an actor to a performance
 - `POST /performances/populate` – Populate database with sample performances and actors
 
-**Using `PUT` to assign an actor is chosen due to idempotency and suitability for updating existing resources. `PATCH` could alternatively be used for partial updates, but `PUT` is clearer here.**
+**PUT is preferred for assigning actors due to its stability and predictability. PATCH could be used for partial updates, but PUT offers clearer behavior**
 
 ### Additional (Not Implemented Yet)
 - Filtering performances by genre

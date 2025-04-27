@@ -94,3 +94,8 @@ Authorization: Bearer {{jwt_token}}
 ### Delete performance
 DELETE {{url}}/performances/performances/1
 Authorization: Bearer {{jwt_token}}
+
+### Get actor overview by revenue/time
+GET {{url}}/performances/performances/actors/overview
+Authorization: Bearer {{jwt_token}}
+

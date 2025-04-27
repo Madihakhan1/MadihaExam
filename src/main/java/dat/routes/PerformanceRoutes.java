@@ -59,6 +59,11 @@ public class PerformanceRoutes {
                 }
             });
 
+            get("/performances/actors/overview", ctx -> {
+                List<Map<String, Object>> overview = controller.getActorOverviewByRevenue();
+                ctx.json(overview);
+            });
+
         };
     }
 }
