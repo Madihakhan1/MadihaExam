@@ -2,14 +2,12 @@ package dat.routes;
 
 import dat.controllers.impl.PerformanceController;
 import dat.dtos.PerformanceDTO;
-import dat.entities.Genre;
-import dat.security.enums.Role;
 import io.javalin.apibuilder.EndpointGroup;
+
+import static io.javalin.apibuilder.ApiBuilder.*;
 
 import java.util.List;
 import java.util.Map;
-
-import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class PerformanceRoutes {
 
@@ -21,49 +19,36 @@ public class PerformanceRoutes {
 
     public EndpointGroup getRoutes() {
         return () -> {
-            get("/performances", ctx -> ctx.json(controller.getAll()));
-            get("/performances/{id}", ctx -> {
+            // Bemærk: ingen ekstra "/performances" her!
+
+            get("/", ctx -> ctx.json(controller.getAll()));
+
+            get("/{id}", ctx -> {
                 int id = Integer.parseInt(ctx.pathParam("id"));
-                PerformanceDTO dto = controller.getById(id);
-                if (dto != null) {
-                    ctx.status(200).json(dto);
-                } else {
-                    ctx.status(404).json(Map.of("error", "Performance not found"));
-                }
+                ctx.json(controller.getById(id));
             });
 
-            post("/performances", ctx -> {
+            post("/", ctx -> {
                 PerformanceDTO dto = ctx.bodyAsClass(PerformanceDTO.class);
-                PerformanceDTO created = controller.create(dto);
-                ctx.status(201).json(created);
+                ctx.status(201).json(controller.create(dto));
             });
 
-            put("/performances/{id}", ctx -> {
+            put("/{id}", ctx -> {
                 int id = Integer.parseInt(ctx.pathParam("id"));
                 PerformanceDTO dto = ctx.bodyAsClass(PerformanceDTO.class);
-                PerformanceDTO updated = controller.update(id, dto);
-                if (updated != null) {
-                    ctx.status(200).json(updated);
-                } else {
-                    ctx.status(404).json(Map.of("error", "Performance not found"));
-                }
+                ctx.json(controller.update(id, dto));
             });
 
-            delete("/performances/{id}", ctx -> {
+            delete("/{id}", ctx -> {
                 int id = Integer.parseInt(ctx.pathParam("id"));
-                boolean deleted = controller.delete(id);
-                if (deleted) {
-                    ctx.status(204);
-                } else {
-                    ctx.status(404).json(Map.of("error", "Performance not found"));
-                }
+                controller.delete(id);
+                ctx.status(204);
             });
 
-            get("/performances/actors/overview", ctx -> {
+            get("/actors/overview", ctx -> {
                 List<Map<String, Object>> overview = controller.getActorOverviewByRevenue();
                 ctx.json(overview);
             });
-
         };
     }
 }

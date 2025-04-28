@@ -8,6 +8,4 @@ public interface IDAO<T, Integer> {
         T getById(int id);
         T update(int id, T t);
         boolean delete(int id);
-    }
-
-
+}

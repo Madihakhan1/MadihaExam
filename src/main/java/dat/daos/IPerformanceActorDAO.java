@@ -1,7 +1,6 @@
 package dat.daos;
 
 import dat.dtos.PerformanceDTO;
-
 import java.util.Set;
 
 public interface IPerformanceActorDAO {
