@@ -63,7 +63,11 @@ public class PerformanceDAO implements IDAO<PerformanceDTO, Integer>, IPerforman
             }
             return new PerformanceDTO(performance);
         } catch (Exception e) {
-            throw new DAOException("Error retrieving performance", e);
+            if (e instanceof DAOException) {
+                throw (DAOException) e;
+            } {
+                throw new DAOException("Error retrieving performance", e);
+            }
         } finally {
             em.close();
         }
